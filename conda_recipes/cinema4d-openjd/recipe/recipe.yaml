@@ -6,21 +6,23 @@
 # https://github.com/aws-deadline/deadline-cloud-samples/tree/mainline/conda_recipes
 
 context:
-  version: "0.8.2"
+  version: "0.8.8"
 
 package:
   name: cinema4d-openjd
   version: ${{ version }}
 
-# This source reference uses the source archive published to PyPI
+# Use S3-hosted source for testing local changes
 source:
-  url: https://pypi.io/packages/source/d/deadline-cloud-for-cinema-4d/deadline_cloud_for_cinema_4d-${{ version }}.tar.gz
-  sha256: 511ad495d992d43fbdf3212c91653c79ae5b32a48ebd158c46a2823ded09a239
+  url: s3://deadlinecloud-job-attachments-vaish-test-monitor/source/deadline_cloud_for_cinema_4d-0.8.5.post12+g1cb6a50ab.tar.gz
 
 build:
   number: 0
   script:
     - python -m pip install . -vv --no-deps
+    - if: linux
+      then:
+        - chmod +x $PREFIX/lib/python3.13/site-packages/deadline/cinema4d_adaptor/Cinema4DAdaptor/adaptor.sh || true
 
 requirements:
   host:
@@ -30,7 +32,7 @@ requirements:
     - pip
   run:
     - python
-    - deadline >=0.51.1,<0.53
+    - deadline >=0.51.1,<0.54
     - openjd-adaptor-runtime 0.9.*
 
 tests:
